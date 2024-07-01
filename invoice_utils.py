@@ -7,14 +7,19 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.llm import LLMChain
 from langchain_openai import AzureOpenAIEmbeddings
 from langchain_openai import AzureChatOpenAI, AzureOpenAI
+import numpy as np
+import json
 
-gpt4_api_version = "2023-07-01-preview"
-gpt4_azure_api_key = "-----------------------------------------"
-gpt4_azure_endpoint = "https://azure-openai-----------------azure.com/"
+gpt4_azure_api_key ="54b0647cfcea4d02a3ac0e69051882a5" 
+gpt4_azure_endpoint = "https://kicwa-aoai-dev.openai.azure.com/" 
 gpt4_deploy_name= "gpt-4"
+gpt4_model_name= "gpt-4"
+gpt4_api_version = "2024-02-01"
+
+
 
 llm_gpt4 = AzureChatOpenAI(temperature=0.0,
-                                    model_name="gpt-4",
+                                    model_name=gpt4_model_name,
                                     openai_api_version=gpt4_api_version,
                                     azure_deployment=gpt4_deploy_name,
                                     openai_api_key=gpt4_azure_api_key,
@@ -33,7 +38,7 @@ def create_docs(user_pdf_list):
                    'Description': pd.Series(dtype='str'),
                    'Quantity': pd.Series(dtype='str'),
                    'Date': pd.Series(dtype='str'),
-	                'Unit price': pd.Series(dtype='str'),
+	               'Unit price': pd.Series(dtype='str'),
                    'Amount': pd.Series(dtype='int'),
                    'Total': pd.Series(dtype='str'),
                    'Email': pd.Series(dtype='str'),
@@ -63,12 +68,28 @@ def create_docs(user_pdf_list):
         prompt = PromptTemplate.from_template(template)
 
 
-        chain = LLMChain(llm=llm_gpt4, prompt=prompt)
+        #chain= LLMChain(llm=llm_gpt4, prompt=prompt) #prompt | llm
 
-        data_dict = chain.run(texts)
+        chain = (prompt | llm_gpt4)
 
-        print("Dict:...", data_dict)
-        new_row_df = pd.DataFrame([eval(data_dict)], columns=df.columns)
+        data_dict = chain.invoke(texts)
+
+        content= dict(data_dict)['content'] #[content.index('{'):]
+        row=content[content.index('{'):content.index('}')+1]       
+
+         #d = json.loads(content[content.index('{'):])
+       
+           
+        #table=[]
+
+        #df2 = pd.DataFrame(np.array(table),
+                   #columns=['Invoice no.', 'Description', 'Quantity', 'Date', 'Amount', 'Total', 'Email','Phone number', 'Address'])
+        
+
+        #for i in dict(data_dict):
+           # print(i)
+
+        new_row_df = pd.DataFrame([eval(row)], columns=df.columns)
         df = pd.concat([df, new_row_df], ignore_index=True)  
 
         print("********************DONE***************")
