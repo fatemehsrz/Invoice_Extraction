@@ -10,8 +10,8 @@ from langchain_openai import AzureChatOpenAI, AzureOpenAI
 import numpy as np
 import json
 
-gpt4_azure_api_key ="54b0647cfcea4d02a3ac0e69051882a5" 
-gpt4_azure_endpoint = "https://kicwa-aoai-dev.openai.azure.com/" 
+gpt4_azure_api_key ="---------------" 
+gpt4_azure_endpoint = "https:/-----------------------openai.azure.com/" 
 gpt4_deploy_name= "gpt-4"
 gpt4_model_name= "gpt-4"
 gpt4_api_version = "2024-02-01"
@@ -69,7 +69,7 @@ def create_docs(user_pdf_list):
 
 
         #chain= LLMChain(llm=llm_gpt4, prompt=prompt) #prompt | llm
-        
+
         chain = (prompt | llm_gpt4)
         data_dict = chain.invoke(texts)
         content= dict(data_dict)['content'] #[content.index('{'):]
