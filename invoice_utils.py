@@ -69,25 +69,13 @@ def create_docs(user_pdf_list):
 
 
         #chain= LLMChain(llm=llm_gpt4, prompt=prompt) #prompt | llm
-
+        
         chain = (prompt | llm_gpt4)
-
         data_dict = chain.invoke(texts)
-
         content= dict(data_dict)['content'] #[content.index('{'):]
         row=content[content.index('{'):content.index('}')+1]       
 
-         #d = json.loads(content[content.index('{'):])
-       
-           
-        #table=[]
-
-        #df2 = pd.DataFrame(np.array(table),
-                   #columns=['Invoice no.', 'Description', 'Quantity', 'Date', 'Amount', 'Total', 'Email','Phone number', 'Address'])
         
-
-        #for i in dict(data_dict):
-           # print(i)
 
         new_row_df = pd.DataFrame([eval(row)], columns=df.columns)
         df = pd.concat([df, new_row_df], ignore_index=True)  
@@ -99,3 +87,15 @@ def create_docs(user_pdf_list):
 
 pdf= ["invoice_3452334.pdf", "invoice_3452334.pdf"]
 create_docs(pdf) 
+
+
+
+
+
+#d = json.loads(content[content.index('{'):])        
+#table=[]
+#df2 = pd.DataFrame(np.array(table),
+                   #columns=['Invoice no.', 'Description', 'Quantity', 'Date', 'Amount', 'Total', 'Email','Phone number', 'Address'])
+        
+#for i in dict(data_dict):
+           # print(i)
